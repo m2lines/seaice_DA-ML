@@ -9,3 +9,6 @@ In the offline_learning folder is an example jupyter notebook of how the CNN was
 ### Online ice-ocean
 
 Example scripts of how to implement the trained CNN into SPEAR ice-ocean simulations as a way to correct short-forecasts.
+
+
+To cite this code please use the Zenodo DOI: [![DOI](https://zenodo.org/badge/604827831.svg)](https://zenodo.org/badge/latestdoi/604827831)
