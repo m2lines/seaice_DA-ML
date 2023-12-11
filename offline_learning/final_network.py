@@ -45,8 +45,8 @@ argsB = {
 'seed':711,
 }
 
-NetworkA_weights = '../CNN_weights/NetworkA_weights_1982-2017_allsamples.pt'
-NetworkB_weights = '../CNN_weightsNetworkB_weights_1982-2017_allsamples.pt'
+NetworkA_weights = '../CNN_weights/NetworkA_weights_CNNG23.pt'
+NetworkB_weights = '../CNN_weights/NetworkB_weights_CNNG23.pt'
                                                                        
 inputs = ['SIC','SST','SIU','SIV','SIT','SW','TS','SSS']
 
@@ -55,6 +55,7 @@ increments = xr.open_dataset('seaice_DA-ML_outputs_1982-2017.nc')
 dSIC = increments.dSIC.to_numpy()
 dSICN = increments.dSICN.to_numpy()
 lat = xr.open_dataset('../data_files/ice.static.nc').GEOLAT.to_numpy()
+pad_size = 4
 
 ### NETWORK A ### 
 X = []
@@ -66,11 +67,11 @@ X = np.transpose(X,(1,0,2,3))
 land_mask = np.copy(X[:,0])
 land_mask[~np.isnan(land_mask)] = 1
 land_mask[np.isnan(land_mask)] = 0
-land_mask[:,:4] = 0
+land_mask[:,:pad_size] = 0
                      
 #compute statistics over ocean grid cells above 40 degrees latitude:
-NH = np.where((lat>40) & (land_mask[0,4:-4,4:-4]==1))
-SH = np.where((lat<-40) & (land_mask[0,4:-4,4:-4]==1))
+NH = np.where((lat>40) & (land_mask[0,pad_size:-pad_size,pad_size:-pad_size]==1))
+SH = np.where((lat<-40) & (land_mask[0,pad_size:-pad_size,pad_size:-pad_size]==1))
 normIDs = (np.concatenate((NH[0],SH[0])),np.concatenate((NH[1],SH[1]))) 
 
 X = np.hstack((X,land_mask[:,None]))
@@ -93,17 +94,17 @@ else:
     np.savez('../data_files/NetworkA_statistics_1982-2017_allsamples.npz',mu=mu,sigma=sigma)
 
 argsA['n_channels'] = X.shape[1]
-dSIC = Net(X,argsA,y_train=dSIC,x_valid=X,y_valid=dSIC,path=NetworkA_weights)[:,0] #generate aggregate SIC increment prediction
-dSIC[land_mask[:,4:-4,4:-4]==0] = 0
+dSIC_pred = Net(X,argsA,y_train=dSIC,x_valid=X,y_valid=dSIC,path=NetworkA_weights)[:,0] #generate aggregate SIC increment prediction
+dSIC_pred[land_mask[:,pad_size:-pad_size,pad_size:-pad_size]==0] = 0
 
 ### NETWORK B ###                                                                                                                                                                  
-X = [dSIC]
+X = [dSIC_pred]
 for CAT in range(5):
     X.append(forecasts['SICN'].isel(n=0,ct=CAT).to_numpy()[None])
     X.append(forecasts['SICN'].isel(n=1,ct=CAT).to_numpy()[None])
 X = np.transpose(X,(1,0,2,3))
 
-X = np.hstack((X,land_mask[:,None,4:-4,4:-4]))
+X = np.hstack((X,land_mask[:,None,pad_size:-pad_size,pad_size:-pad_size]))
 X[np.isnan(X)] = 0
 
 if os.path.exists('../data_files/NetworkB_statistics_1982-2017_allsamples.npz')
@@ -118,13 +119,15 @@ else:
         mu[N] = np.nanmean(X[:,N,normIDs[0],normIDs[1]])
         sigma[N] = np.nanstd(X[:,N,normIDs[0],normIDs[1]])
         X[:,N] = (X[:,N]-mu[N])/sigma[N]
-        X[:,N][land_mask[:,4:-4,4:-4]==0] = 0
+        X[:,N][land_mask[:,pad_size:-pad_size,pad_size:-pad_size]==0] = 0
     np.savez('../data_files/NetworkB_statistics_1982-2017_allsamples.npz',mu=mu,sigma=sigma)
 
 argsB['n_channels'] = X.shape[1]
 dSICN_pred = Net(X,argsB,y_train=dSICN,x_valid=X,y_valid=dSICN,path=NetworkB_weights) #generate category SIC increment prediction
 for CAT in range(5):
-    dSICN_pred[:,CAT][land_mask[:,4:-4,4:-4]==0] = 0
-dSICN[member] = dSICN_pred
+    dSICN_pred[:,CAT][land_mask[:,pad_size:-pad_size,pad_size:-pad_size]==0] = 0
 
-np.save('dSICN_increment_1982-2017_allsamples.npy',dSICN)
+ds = xr.Dataset(data_vars=dict(dSICN=(['time', 'ct', 'yT', 'xT'], dSICN_pred)), coords=dict(yT=forecasts['yT'], xT=forecasts['xT']))
+ds.dSICN.attrs['long_name'] = 'category_sea_ice_concentration_increments'
+ds.dSICN.attrs['units'] = 'area_fraction'
+ds.to_netcdf('dSICN_increment_1982-2017_CNNG23.nc')
