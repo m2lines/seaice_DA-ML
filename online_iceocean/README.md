@@ -1,6 +1,6 @@
 ### Implementation of CNN into SPEAR ice-ocean simulations
 
-The CNN correction is applied back into SPEAR ice-ocean simulations as a bias correction tool. In other words, we run a short simulation/forecast of the model, e.g., for 5 days, at which point the CNN updates the restart files as a post-processing step, and then the model continues from this updated state for the next 5 days. Note that the `CNN_SIS2.py' code will need to be changed depending on what CNN weights you want to use
+The CNN correction is applied back into SPEAR ice-ocean simulations as a bias correction tool. In other words, we run a short simulation/forecast of the model, e.g., for 5 days, at which point the CNN updates the restart files as a post-processing step, and then the model continues from this updated state for the next 5 days. Note that the `CNN_SIS2.py` code will need to be changed depending on what CNN weights you want to use
 
 The post-processing step to implement a CNN into an xml is done in the following way:
 
