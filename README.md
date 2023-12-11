@@ -4,8 +4,11 @@ This repository is part of the larger [M2LInES](https://m2lines.github.io) proje
 
 ### Offline learning
 
-The `offline_learning` folder contains code and data relating to the article [Gregory et al., 2023a](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2023MS003757), with an example jupyter notebook of how the CNN was trained and model selection performed by carrying out 5-fold cross-validation tests. To cite the code for offline training please use the Zenodo DOI: [![DOI](https://zenodo.org/badge/604827831.svg)](https://zenodo.org/badge/latestdoi/604827831)
+The `offline_learning` folder contains code and data relating to the article [Gregory et al., 2023a](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2023MS003757), with an example jupyter notebook of how the CNN was trained and model selection performed by carrying out 5-fold cross-validation tests. 
 
 ### Online ice-ocean
 
 The `online_iceocean` folder contains example scripts of how to implement the trained CNN into SPEAR ice-ocean simulations, by updating the sea ice restart files, as a way to correct short-forecasts. This methodology is outlined in the article [Gregory et al., 2023b](https://arxiv.org/pdf/2310.02488.pdf).
+
+
+To cite the code please use the Zenodo DOI: [![DOI](https://zenodo.org/badge/604827831.svg)](https://zenodo.org/badge/latestdoi/604827831)
