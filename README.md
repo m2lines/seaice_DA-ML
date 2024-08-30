@@ -4,11 +4,15 @@ This repository is part of the larger [M2LInES](https://m2lines.github.io) proje
 
 ### Offline learning
 
-The `offline_learning` folder contains code and data relating to the article [Gregory et al., 2023a](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2023MS003757), with an example jupyter notebook of how the CNN was trained and model selection performed by carrying out 5-fold cross-validation tests. 
+The `offline_learning` folder contains code and data relating to the article [Gregory et al., 2023](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2023MS003757), with an example jupyter notebook of how the CNN was trained and model selection performed by carrying out 5-fold cross-validation tests.
 
 ### Online ice-ocean
 
-The `online_iceocean` folder contains example scripts of how to implement the trained CNN into SPEAR ice-ocean simulations, by updating the sea ice restart files, as a way to correct short-forecasts. This methodology is outlined in the article [Gregory et al., 2023b](https://arxiv.org/pdf/2310.02488.pdf).
+The `online_iceocean` folder contains example scripts of how to implement the trained CNN into SPEAR ice-ocean simulations, by updating the sea ice restart files, as a way to correct short-forecasts. This methodology is outlined in the article [Gregory et al., 2024](https://doi.org/10.1029/2023GL106776).
+
+### Online forPy
+
+Example scripts of implementing the CNN into SIS2, via the Forpy Fortran-Python interface. This approach allows the CNN to be called at the model timestep, rather than the approach above, which relies on updating the model restart files. Using Forpy to implement a CNN into MOM6 is outlined in [Zhang et al., 2023](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/2023MS003697).
 
 
 To cite the code please use the Zenodo DOI: [![DOI](https://zenodo.org/badge/604827831.svg)](https://zenodo.org/badge/latestdoi/604827831)
